@@ -1,78 +1,73 @@
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayDeque;
 import java.util.Scanner;
 
 public class Main {
-
-    // 방문했는지 여부를 확인하기 위한 array
-    static int[] arr = new int[200000];
-    static int cnt = 0;
-    static Queue<Integer> queue = new LinkedList<>();
-
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int K = sc.nextInt();
-       // System.out.println("N : " + N + ", K : " + K);
-    
-        int result = start(N, K);
-        System.out.println(result);
+
+        Scanner scanner = new Scanner(System.in);
+        String[] split = scanner.nextLine().split(" ");
+        int start = Integer.parseInt(split[0]);
+        int destination = Integer.parseInt(split[1]);
+        int i = hideAndSeek(start, destination);
+        System.out.println(i);
+
     }
 
-    private static int start(int N, int K) {
-        
-        
-        
-        if (N == K) {
-            return 0;
-        }
-        //System.out.println("함수 시작.. N : " + N + ", K : " + K);
-        queue.offer(N);
-        arr[N] = 0;
+    private static int hideAndSeek(int start, int destination) {
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+        int[] visited = new int[100001];
+        visited[start] = 0;
+        queue.offer(start);
         int result = 0;
 
+        if (start == destination) {
+            return result;
+        }
+
         while (!queue.isEmpty()) {
-            //System.out.println(queue);
-            //System.out.println("큐에 들어있어용");
-            int tmp = queue.poll();
 
-            cnt = arr[tmp];
-        //    System.out.println("tmp = " + tmp + ", tmp의 cnt = " + cnt);
+            // 큐에서 꺼내고
+            int currentLocation = queue.poll();   // visited[5] = 0
+            int currentTime = visited[currentLocation];
 
-            int minus = tmp - 1; // 4
-            int plus = tmp + 1; // 6
-            int multiply = tmp  * 2; // 10
-            cnt++;
-
-
-            if (minus >= 0 && arr[minus] == 0) {
-                arr[minus] = cnt;
-            //    System.out.println("빼기1 값 등록 :" + minus + ", 카운트 값 : " + cnt);
-                if (minus == K) {
-                    result = arr[minus];
-                    break;
-                }
-                queue.offer(minus);
+            // 목적지인지 확인
+            if (currentLocation == destination) {
+                return visited[currentLocation];
             }
-            if (plus < arr.length && arr[plus] == 0) {
-                arr[plus] = cnt;
-             //   System.out.println("더하기1 값 등록 :" + plus + ", 카운트 값 : " + cnt);
-                if (plus == K) {
-                    result = arr[plus];
+
+            currentTime++;
+
+            // 목적지가 아닌 경우 +1, -1, * 2 큐에 넣고 배열에 체크
+            int plus = currentLocation + 1;
+            int minus = currentLocation - 1;
+            int multiply = currentLocation * 2;
+
+            if (plus < visited.length && visited[plus] == 0) {
+                visited[plus] = currentTime;
+                if (plus == destination) {
+                    result =  visited[plus];
                     break;
                 }
                 queue.offer(plus);
             }
-            if (multiply < arr.length && arr[multiply] == 0) {
-                arr[multiply] = cnt;
-             //   System.out.println("곱하기2 값 등록 :" + multiply + ", 카운트 값 : " + cnt);
-                if (multiply == K) {
-                    result = arr[multiply];
+
+            if (minus >= 0 && visited[minus] == 0) {
+                visited[minus] = currentTime;
+                if (minus == destination) {
+                    result =  visited[minus];
+                    break;
+                }
+                queue.offer(minus);
+            }
+
+            if (multiply < visited.length && visited[multiply] == 0) {
+                visited[multiply] = currentTime;
+                if (multiply == destination) {
+                    result =  visited[multiply];
                     break;
                 }
                 queue.offer(multiply);
             }
-
         }
         return result;
     }
