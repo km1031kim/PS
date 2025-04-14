@@ -4,46 +4,66 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 
-public class Main {
+class Main {
 	public static void main(String[] args) throws IOException {
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-		String[] split = br.readLine().split(" ");
+		String input = br.readLine();
+		String[] split = input.split(" ");
 		int N = Integer.parseInt(split[0]);
 		int K = Integer.parseInt(split[1]);
 
+		// N - 수빈이의 위치
+		// K - 동생의 위치
+
+		// 걷거나 순간이동, -1, 1, *2
+		// 중복되면 안됨.
+
 		int[] visited = new int[100001];
 		for (int i = 0; i < visited.length; i++) {
-			visited[i] = -1; // 방문하지 않았음을 명확하게 표시
+			visited[i] = -1;
 		}
 
+		int sec = 0;
 		ArrayDeque<Integer> queue = new ArrayDeque<>();
 
-		visited[N] = 0;
+		// 수빈이의 위치는 0초일때
+		visited[N] = sec;
+
+		// 수빈이의 위치를 큐에 넣음
 		queue.offer(N);
 
 		while (!queue.isEmpty()) {
-			int location = queue.poll();
-			int currentTime = visited[location];
+			Integer location = queue.poll();
+			int now = visited[location];
 
+			// 동생의 위치인 경우
 			if (location == K) {
-				bw.write(String.valueOf(currentTime));
-				bw.flush();
-				bw.close();
+				System.out.println(now);
 				return;
 			}
 
-			int[] nextPositions = {location - 1, location + 1, location * 2};
+			// 동생의 위치가 아닌 경우
+			// 배열로 빼서, 배열의 요소들이 범위 내에 드는지 화인해보기
+			int[] next = new int[] {location - 1, location + 1, location * 2};
 
-			for (int next : nextPositions) {
-				if (next >= 0 && next < visited.length && visited[next] == -1) {
-					visited[next] = currentTime + 1;
-					queue.offer(next);
+			for (int n : next) {
+				// -1이여야하고, 범위 내에 들어아 함
+				if ( n >= 0 && n < visited.length && visited[n] == -1) {
+					int nextTime = now + 1;
+					visited[n] = nextTime;
+					if (n == K) {
+						System.out.println(nextTime);
+						return;
+					}
+					queue.offer(n);
 				}
 			}
+
 		}
+
 	}
 }
