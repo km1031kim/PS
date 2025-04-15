@@ -1,120 +1,112 @@
-
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 
 class Solution {
-    public String[] solution(String[] orders, int[] course) {
+		static HashMap<String, Integer> map = new HashMap<>();
 
-        HashMap<Integer, Course> map = new HashMap<>();
-
-        for (int i = 0; i < course.length; i++) {
-            int key = course[i];
-            map.put(key, new Course());
-        }
-
-        for (int i = 0; i < orders.length; i++) {
-            for (int j = 0; j < course.length; j++) {
-                int limit = course[j];
-                String[] target = orders[i].split("");
-                ArrayList<String> temp = new ArrayList<>();
-                for (String s : target) {
-                    temp.add(s);
-                }
-                temp.sort(null);
-
-                String[] sortedArray = temp.toArray(String[]::new);
-
-                // (0, 2, {"A","B","C","D"}, "")
-                DFS(0, limit, sortedArray, new ArrayList<String>(), map);
-            }
-        }
-
-        ArrayList<String> answer = new ArrayList<>();
-
-        for (Integer key : map.keySet()) {
-            Course c = map.get(key);
-            String[] popularComb = c.getPopularComb();
-            // System.out.println("c = " + c);
-            for (int i = 0; i < popularComb.length; i++) {
-
-                answer.add(popularComb[i]);
-            }
-        }
-        answer.sort(null);
-
-        return answer.stream().toArray(String[]::new);
-    }
+	public String[] solution(String[] orders, int[] course) {
 
 
-    public void DFS(int start, int limit, String[] target, ArrayList<String> answer, HashMap<Integer, Course> map) {
-        // (0, 2, {"A","B","C","D"}, "")
-        if (answer.size() == limit) {
-            // System.out.println("answer = " + answer);
-            StringBuilder sb = new StringBuilder();
-            for (String s : answer) {
-                sb.append(s);
-            }
-            String result = sb.toString();
-             System.out.println("result = " + result);
-            Course course = map.get(limit);
-            course.add(result);
-            return;
-        }
+			// orders 하나만 제대로 하면 나머지는 거기서 거기다.
+			// orders
 
-        for (int i = start; i < target.length; i++) {
-              if(target.length - start < limit - answer.size()) {
-                return;
-            }
-            String s = target[start];
-            answer.add(s); // answer = {"A"}
+			for (int i = 0; i < orders.length; i++) {
+					String temp = orders[i];
+				char[] charArray = temp.toCharArray();
+				Arrays.sort(charArray);
+				String order = new String(charArray);
 
-            // 현재 answer의 길이 + 추가로 갈 수 있는 길이
-            // 5개 중 3개를 선택했음
-            // {ABCDE} 에서 {ACD}
-            // 4개가 되는지 확인이 필요함
-            // 현재 길이 + 남은 길이(target-length-start+1) < limit 면 의미없음
-          
-            DFS(++start, limit, target, answer, map);
-            answer.remove(answer.size() - 1);
-        }
-    }
+				// course 배열 돌아야함.
+				for (int j = 0; j < course.length; j++) {
+					int cnt = course[j];
+					if (order.length() < cnt) {
+						continue;
+					}
 
-    static class Course {
+					// 재귀 시작..
+					// 뭐가 필요할까? 일단 course 필요함, order도 필요함, 빈 ArrayList도 필요함. 다음 시작 인덱스 필요함.
+					recursive(0, new ArrayList<>(), order, cnt);
 
-        int max;
-        private final HashMap<String, Integer> combination = new HashMap<>();
+				}
 
-        public void add(String courseName) {
-            int cnt = combination.getOrDefault(courseName, 0) + 1;
-            combination.put(courseName, cnt); // 있으면 가져오고 없으면 0이다
-            if (cnt > max) {
-                // max 갱신
-                max = cnt;
-            }
-        }
+			}
+			// 2 : 4
+			HashMap<Integer, Integer> resultMap = new HashMap<>();
 
-        public String[] getPopularComb() {
-            // 인기 많은 조합 내보내기
-            ArrayList<String> arrayList = new ArrayList<>();
-            if (max == 1) {
-                return new String[]{};
-            }
-            for (String key : combination.keySet()) {
-                if (combination.get(key) == max) {
-                    arrayList.add(key);
-                }
-            }
-            return arrayList.toArray(String[]::new);
-        }
+			// 메뉴 수 별로 맥스값 추출
+			map.keySet().stream()
+				.filter(key -> map.get(key) >= 2)
+				.forEach(key -> {
+					int value = resultMap.getOrDefault(key.length(), 0);
+					int maxValue = Math.max(value, map.get(key));
+					resultMap.put(key.length(), maxValue);
+				});
 
-        @Override
-        public String toString() {
-            return "Course{" +
-                    "max=" + max +
-                    ", combination=" + combination +
-                    '}';
-        }
-    }
+			ArrayList<String> resultArrayList = new ArrayList<>();
+
+			for (String key : map.keySet()) {
+				// 키의 길이를 가져오고
+				int keyLength = key.length();
+
+				if (resultMap.containsKey(keyLength)) {
+					// 키의 길이에 해당하는 maxValue를 가져와서
+					int maxValue = resultMap.get(keyLength);
+
+					// 같으면 어레이리스트에 추가
+					if (map.get(key) == maxValue) {
+						resultArrayList.add(key);
+					}
+				}
+
+			}
+			resultArrayList.sort(null);
+
+			return resultArrayList.toArray(String[]::new);
+
+		}
+	
+
+	private static void recursive(int startIndex, ArrayList<String> pickedMenu, String order, int course) {
+
+		// 여기서 재귀 시작임
+		// ABCFG 왔고, 시작 인덱스는 0이고, 코스는 2개임.
+
+		// 탈출조건
+		if (pickedMenu.size() == course) {
+			// 맵에 넣고  A, B 가 들어왔음
+			StringBuilder sb = new StringBuilder();
+			pickedMenu.sort(null);
+
+			for (String menu : pickedMenu) {
+				sb.append(menu);
+			}
+			String comb = sb.toString();
+
+			Integer value = Solution.map.getOrDefault(comb, 0);
+			Solution.map.put(comb, value + 1);
+			return;
+		}
+
+		// 재귀 로직
+		for (int i = startIndex; i < order.length(); i++) {
+
+			// 현재 메뉴
+			String menu = String.valueOf(order.charAt(i)); // A
+
+			// 메뉴를 리스트에 넣고
+			pickedMenu.add(menu);
+
+			// 재귀 호출
+			recursive(i + 1, pickedMenu, order, course);
+
+			// 탈출 시 리스트의 마지막 인덱스 요소 제거
+			pickedMenu.remove(pickedMenu.size() - 1);
+
+		}
+
+	}
 }
 
