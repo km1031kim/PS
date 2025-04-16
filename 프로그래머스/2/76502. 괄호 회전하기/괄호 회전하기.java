@@ -1,66 +1,77 @@
 import java.util.ArrayDeque;
+ 
 
 class Solution {
-        public int solution(String input) {
+		public int solution(String s) {
+			int result = 0;
+			String[] split = s.split("");
 
-            String[] inputArray = input.split("");
-            int answer = 0;
-            for (int i = 0; i < input.length(); i++) {
-                if (i == 0) {
-                    // 처음에는 회전 없음.
-                    if (isRightParenthesis(input)) {
-                        answer++;
-                    }
-                } else {
-                    // 회전 시작
-                    String first = inputArray[0]; // 처음 값 저장
-                    for (int j = 0; j < input.length()-1; j++) {
-                        // 문자열을 회전시켜서 새로운 문자열 만들기
-                        inputArray[j] = inputArray[j + 1];
-                    }
-                    inputArray[inputArray.length - 1] = first;
+			for (int i = 0; i < s.length(); i++) {
+				if (i == 0) {
+					if (isRight(s)) {
+						result++;
+					}
+					continue;
+				}
 
-                    // String.join()으로 String 배열을 하나의 문자열로
-                    String join = String.join("", inputArray);
+				String first = split[0]; // 처음 값 저장
 
-                    if (isRightParenthesis(join)) {
-                        answer++;
-                    }
-                }
-            }
-            return answer;
-        }
+				for (int j = 0; j < s.length() - 1; j++) {
+					split[j] = split[j + 1];
+				}
 
-        public boolean isRightParenthesis(String input) {
-            // 올바른 괄호인지 판단
+				split[s.length() - 1] = first;
 
-            // 괄호의 종류는 총 3개 () {} []
-            ArrayDeque<Character> stack = new ArrayDeque<>();
+				String join = String.join("", split);
 
-            char[] charArray = input.toCharArray();
+				if (isRight(join)) {
+					result++;
+				}
 
-            for (char c : charArray) {
-                // 왼쪽 짜리만 들어올 수 있음.
-                if (c == '[' || c == '{' || c == '(') {
-                    stack.push(c);
-                } else {
-                    // 오른쪽 괄호가 들어왔는데 스택이 비어있으면 잘못된 괄호.
-                    if (stack.isEmpty()) {
-                        return false;
-                    }
+			}
 
-                    // peek찍어서 짝이 맞으면 pop()
-                    if (c == ']' && stack.peek() == '[') {
-                        stack.pop();
-                    } else if (c == '}' && stack.peek() == '{') {
-                        stack.pop();
-                    } else if (c == ')' && stack.peek() == '(') {
-                        stack.pop();
-                    }
-                }
-            }
-            return stack.isEmpty();
-        }
+			return result;
+		}
 
 
-    }
+
+	static boolean isRight(String str) {
+
+		ArrayDeque<Character> stack = new ArrayDeque<>();
+
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			if (stack.isEmpty()) {
+				stack.push(c);
+				continue;
+			}
+
+			Character top = stack.peek();
+
+			if (c == ']') {
+				if (top == '[') {
+					stack.pop();
+				}
+				continue;
+			}
+
+			if (c == '}') {
+				if (top == '{') {
+					stack.pop();
+				}
+				continue;
+			}
+
+			if (c == ')') {
+				if (top == '(') {
+					stack.pop();
+				}
+				continue;
+			}
+
+			stack.push(c);
+		}
+
+		return stack.isEmpty();
+	}
+}
