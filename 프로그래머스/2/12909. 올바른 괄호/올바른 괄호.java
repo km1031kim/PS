@@ -1,36 +1,33 @@
+
 import java.util.ArrayDeque;
+ 
+class Solution {
 
-    public  class Solution{
-        public  boolean solution(String s) {
+		public boolean solution(String s) {
 
-            // stack은 ArrayDeque가 성능이 좋다.
-            ArrayDeque<String> stack = new ArrayDeque<>();
+			ArrayDeque<Character> stack = new ArrayDeque<>();
 
+			for (int i = 0; i < s.length(); i++) {
+				char c = s.charAt(i);
 
-            String[] splitedString = s.split("");
+				if (stack.isEmpty()) {
+					stack.push(c);
+					continue;
+				}
 
-            for (int i = 0; i < splitedString.length; i++) {
-                //  ( ( ) )
-                String tmpStr = splitedString[i];
+				// 스택에 요소가 존재하는 경우 -> 비교해야함
 
-                // 첫번째부터 닫는 괄호가 오면 바로 false
-                if (i==0 && !tmpStr.equals("(")) {
-                    return false;
-                }
+				if (c == ')') {
+					Character top = stack.peek();
+					if (top != c) {
+						stack.pop();
+					}
+					continue;
+				}
 
-                // 여는 괄호는 스택에 추가
-                if (tmpStr.equals("(")) {
-                    stack.push(tmpStr);
-                } else {
-                    // 닫는 괄호는 스택에서 pop
-                    if (stack.size()==0){
-                        return false;
-                    }
-                    stack.pop();
-                }
-            }
+				stack.push(c);
+			}
 
-            return stack.size() == 0;
-        }
-    }
-
+			return stack.isEmpty();
+		}
+	}
