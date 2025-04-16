@@ -1,73 +1,53 @@
-import java.util.*;
-class Solution {
-        public int[] solution(int[] answers) {
+import java.util.Arrays;
+import java.util.HashMap;
+	 class Solution {
+		public int[] solution(int[] answers) {
 
+			// 1번 수포자 : 1,2,3,4,5, 1,2,3,4,5
+			// 2번 수포자 : 2,1,2,3,2,4,2,5   2,1,2,3,2,4,2,5
+			// 3번 수포자 : 3,3,1,1,2,2,4,4,5,5  3,3,1,1,2,2,4,4,5,5
+			int[] one = {1, 2, 3, 4, 5};
+			int[] two = {2, 1, 2, 3, 2, 4, 2, 5};
+			int[] three = {3, 3, 1, 1, 2, 2, 4, 4, 5, 5};
 
-            // 카운트 담을 배열
-            int[] scoreArray = new int[3];
+			HashMap<Integer, Integer> map = new HashMap<>();
 
-            // 정답
-            ArrayList<Integer> answerArrayList = new ArrayList<>();
+			map.put(1, 0);
+			map.put(2, 0);
+			map.put(3, 0);
 
+			for (int i = 0; i < answers.length; i++) {
+				int answer = answers[i];
 
-            // 나머지 연산
-            int[] firstSupo = {1, 2, 3, 4, 5}; // 나머지 연산이넹
-            int[] secondSupo = {2, 1, 2, 3, 2, 4, 2, 5};
-            int[] thridSupo = {3, 3, 1, 1, 2, 2, 4, 4, 5, 5};
+				// 정답과 수포자들의 답을 비교해야 함.
 
+				int aAnswer = one[i % one.length];
+				int bAnswer = two[i % two.length];
+				int cAnswer = three[i % three.length];
 
-            int[] scores = new int[]{0,0,0};
-            int firstSupoCnt = 0;
-            int secondSupoCnt = 0;
-            int thirdSupoCnt = 0;
+				if (answer == aAnswer) {
+					map.put(1, map.getOrDefault(1, 0) + 1);
+				}
 
-            for (int i = 0; i < answers.length; i++) {
-                int firstSupoIndex = i % firstSupo.length; // 0 % 5
-                int secondSupoIndex = i % secondSupo.length; // 0 % 5
-                int thirdSupoIndex = i % thridSupo.length; // 0 % 5
+				if (answer == bAnswer) {
+					map.put(2, map.getOrDefault(2, 0) + 1);
+				}
 
+				if (answer == cAnswer) {
+					map.put(3, map.getOrDefault(3, 0) + 1);
 
-                if (firstSupo[firstSupoIndex] == answers[i]) {
-                    firstSupoCnt++;
-                }
-                if (secondSupo[secondSupoIndex] == answers[i]) {
-                    secondSupoCnt++;
-                }
-                if (thridSupo[thirdSupoIndex] == answers[i]) {
-                    thirdSupoCnt++;
-                }
-            }
+				}
 
-            // 배열에 넣기
-            scoreArray[0] = firstSupoCnt;
-            scoreArray[1] = secondSupoCnt;
-            scoreArray[2] = thirdSupoCnt;
+			}
 
+			Integer maxValue = map.values().stream().max(Integer::compareTo).get();
+			int[] answerArray = map.keySet()
+				.stream()
+				.filter(key -> map.get(key).equals(maxValue))
+				.mapToInt(Integer::valueOf)
+				.toArray();
 
-            // 최대값
-            int maxScore = 0;
-            for (int i = 0; i < scoreArray.length; i++) {
-                if (scoreArray[i] > maxScore) {
-                    maxScore = scoreArray[i];
-                }
-            }
-          //  System.out.println("maxScore = " + maxScore);
-
-            // 제일 많이 맞춘 수포자를 ArrayList로
-            for (int i = 0; i < scoreArray.length; i++) {
-                if (scoreArray[i] == maxScore) {
-                    answerArrayList.add(i + 1);
-                }
-            }
-
-            // 정렬
-            Collections.sort(answerArrayList);
-
-            // int[] 로 변환
-            int[] answer = new int[answerArrayList.size()];
-            for (int i = 0; i < answer.length; i++) {
-                answer[i] = answerArrayList.get(i);
-            }
-            return answer;
-        }
-    }
+			Arrays.sort(answerArray);
+			return answerArray;
+		}
+	}
