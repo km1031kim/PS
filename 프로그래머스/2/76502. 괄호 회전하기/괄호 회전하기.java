@@ -1,29 +1,25 @@
 import java.util.ArrayDeque;
- 
 
-class Solution {
-		public int solution(String s) {
+ class Solution {
+		public int solution(String input) {
 			int result = 0;
-			String[] split = s.split("");
 
-			for (int i = 0; i < s.length(); i++) {
+			String[] split = input.split(""); // [ ] ( ) { }
+
+			for (int i = 0; i < input.length(); i++) {
 				if (i == 0) {
-					if (isRight(s)) {
+					if (isRight(input)) {
 						result++;
 					}
 					continue;
 				}
 
-				String first = split[0]; // 처음 값 저장
-
-				for (int j = 0; j < s.length() - 1; j++) {
+				String first = split[0];
+				for (int j = 0; j < split.length - 1; j++) {
 					split[j] = split[j + 1];
 				}
-
-				split[s.length() - 1] = first;
-
+				split[split.length - 1] = first;
 				String join = String.join("", split);
-
 				if (isRight(join)) {
 					result++;
 				}
@@ -33,45 +29,49 @@ class Solution {
 			return result;
 		}
 
+		private static boolean isRight(String input) {
 
+			//
+			ArrayDeque<String> stack = new ArrayDeque<>();
 
-	static boolean isRight(String str) {
+			String[] split = input.split("");
 
-		ArrayDeque<Character> stack = new ArrayDeque<>();
+			for (int i = 0; i < split.length; i++) {
 
-		for (int i = 0; i < str.length(); i++) {
-			char c = str.charAt(i);
-			if (stack.isEmpty()) {
-				stack.push(c);
-				continue;
-			}
+				String s = split[i];
 
-			Character top = stack.peek();
-
-			if (c == ']') {
-				if (top == '[') {
-					stack.pop();
+				if (stack.isEmpty()) {
+					stack.push(s);
+					continue;
 				}
-				continue;
-			}
 
-			if (c == '}') {
-				if (top == '{') {
-					stack.pop();
+				String top = stack.peek();
+
+				if (s.equals(")")) {
+					if (top.equals("(")) {
+						stack.pop();
+					}
+					continue;
 				}
-				continue;
-			}
 
-			if (c == ')') {
-				if (top == '(') {
-					stack.pop();
+				if (s.equals("]")) {
+					if (top.equals("[")) {
+						stack.pop();
+					}
+					continue;
 				}
-				continue;
+
+				if (s.equals("}")) {
+					if (top.equals("{")) {
+						stack.pop();
+					}
+					continue;
+				}
+				stack.push(s);
 			}
 
-			stack.push(c);
+			return stack.isEmpty();
 		}
-
-		return stack.isEmpty();
 	}
-}
+
+
