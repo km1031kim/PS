@@ -1,84 +1,86 @@
 import java.util.HashSet;
-import java.util.Set;
+ 
+class Solution {
+	public int solution(String dirs) {
 
+			// 방문을 확인해야함.
 
- class Solution {
-        public int solution(String dirs){
-            int answer = 0;
-            int[] start = {0, 0};
-            String[] pathway = dirs.split("");
-            Set<String> set = new HashSet<>();
+			int row = 0;
+			int col = 0;
 
-            for (int i = 0; i < pathway.length; i++) {
-                String startPoint;
-                String destPoint;
-                String history;
-                String reverse;
+			// row, col
 
-                switch (pathway[i]) {
-                    case "U" :
-                        // 출발지
-                        startPoint = start[0] + "" + start[1];
+			HashSet<String> set = new HashSet<>();
+			int cnt = 0;
 
-                        // 이동
-                        if (start[0] + 1 > 5) {
-                            continue;
-                        }
+			for (int i = 0; i < dirs.length(); i++) {
 
-                        start[0]++;
+				String command = String.valueOf(dirs.charAt(i));
 
-                        // 목적지
-                        destPoint = start[0] + "" + start[1];
+				if (command.equals("U") && row + 1 <= 5) {
+					String history = row + "" + col + " " + (row + 1) + "" + col;
 
-                        // 출발지 목적지 기록
-                        history = startPoint + destPoint;
+					row = row + 1;
 
-                        // 역순 기록
-                        reverse = destPoint + startPoint;
+					String[] split = history.split(" ");
+					String reverse = split[1] + " " + split[0];
 
-                        // set에 추가
-                        set.add(history);
-                        set.add(reverse);
-                        break;
-                    case "D" :
-                        startPoint = start[0] + "" + start[1];
-                        if (start[0] - 1 < -5) {
-                            continue;
-                        }
-                        start[0]--;
-                        destPoint = start[0] + "" + start[1];
-                        history = startPoint + destPoint;
-                        reverse = destPoint + startPoint;
-                        set.add(history);
-                        set.add(reverse);
-                        break;
-                    case "R" :
-                        startPoint = start[0] + "" + start[1];
-                        if (start[1] + 1 > 5) {
-                            continue;
-                        }
-                        start[1]++;
-                        destPoint = start[0] + "" + start[1];
-                        history = startPoint + destPoint;
-                        reverse = destPoint + startPoint;
-                        set.add(history);
-                        set.add(reverse);
-                        break;
-                    case "L" :
-                        startPoint = start[0] + "" + start[1];
-                        if (start[1] - 1 < -5) {
-                            continue;
-                        }
-                        start[1]--;
-                        destPoint = start[0] + "" + start[1];
-                        history = startPoint + destPoint;
-                        reverse = destPoint + startPoint;
-                        set.add(history);
-                        set.add(reverse);
-                        break;
-                }
-            }
-            return set.size() / 2;
-        }
-    }
+					if (!set.contains(history) && !set.contains(reverse)) {
+						set.add(history);
+						set.add(reverse);
+						cnt++;
+					}
+					continue;
+				}
 
+				if (command.equals("D") && row - 1 >= -5) {
+					String history = row + "" + col + " " + (row - 1) + "" + col;
+
+					row = row -1;
+
+					String[] split = history.split(" ");
+					String reverse = split[1] + " " + split[0];
+
+					if (!set.contains(history) && !set.contains(reverse)) {
+						set.add(history);
+						set.add(reverse);
+						cnt++;
+					}
+					continue;
+				}
+
+				if (command.equals("L") && col - 1 >= -5) {
+					String history = row + "" + col + " " + row + "" + (col - 1);
+					System.out.println("history = " + history);
+
+					col = col - 1;
+
+					String[] split = history.split(" ");
+					String reverse = split[1] + " " + split[0];
+
+					if (!set.contains(history) && !set.contains(reverse)) {
+						set.add(history);
+						set.add(reverse);
+						cnt++;
+					}
+					continue;
+				}
+
+				if (command.equals("R") && col + 1 <= 5) {
+					String history = row + "" + col + " " + row + "" + (col + 1);
+
+					col = col + 1;
+
+					String[] split = history.split(" ");
+					String reverse = split[1] + " " + split[0];
+
+					if (!set.contains(history) && !set.contains(reverse)) {
+						set.add(history);
+						set.add(reverse);
+						cnt++;
+					}
+				}
+			}
+			return cnt;
+		}
+	}
