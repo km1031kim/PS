@@ -1,25 +1,36 @@
+
 import java.util.ArrayDeque;
-  
- class Solution{
-        public int solution(String s) {
+ 
 
-            // stack은 ArrayDeque()
-            ArrayDeque<Character> queue = new ArrayDeque<>();
+class Solution {
 
-            for (int i = 0; i < s.length(); i++) {
+	public int solution(String s) {
 
-                char c = s.charAt(i);
+			ArrayDeque<String> stack = new ArrayDeque<>();
 
-                if (queue.isEmpty()) {
-                    queue.push(c);
-                } else {
-                    if (queue.peek().equals(c)) {
-                        queue.pop();
-                    } else {
-                        queue.push(c);
-                    } 
-                }
-            }
-            return queue.isEmpty() ? 1 : 0;
-        }
-    }
+			String[] split = s.split("");
+
+
+			for (int i = 0; i < s.length(); i++) {
+				String word = split[i];
+
+				if (stack.isEmpty()) {
+					stack.push(word);
+					continue;
+				}
+
+				// 비어있지 않다면?
+				String top = stack.peek();
+
+				if (word.equals(top)) {
+					stack.pop();
+					continue;
+				}
+
+				stack.push(word);
+			}
+
+			return stack.isEmpty() ? 1 : 0;
+		}
+
+	}
