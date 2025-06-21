@@ -61,7 +61,7 @@ class Solution {
         // 탈출
         if (courseArray.size() == courseCount) {
             
-            courseArray.sort(null);
+           // courseArray.sort(null);
             
             for (Character str : courseArray) {
                 sb.append(String.valueOf(str));
