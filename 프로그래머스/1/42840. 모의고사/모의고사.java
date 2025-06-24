@@ -1,53 +1,54 @@
-import java.util.Arrays;
-import java.util.HashMap;
-	 class Solution {
-		public int[] solution(int[] answers) {
+import java.util.*;
 
-			// 1번 수포자 : 1,2,3,4,5, 1,2,3,4,5
-			// 2번 수포자 : 2,1,2,3,2,4,2,5   2,1,2,3,2,4,2,5
-			// 3번 수포자 : 3,3,1,1,2,2,4,4,5,5  3,3,1,1,2,2,4,4,5,5
-			int[] one = {1, 2, 3, 4, 5};
-			int[] two = {2, 1, 2, 3, 2, 4, 2, 5};
-			int[] three = {3, 3, 1, 1, 2, 2, 4, 4, 5, 5};
+class Solution {
+    public int[] solution(int[] answers) {
+        
+        
+        int[] first = new int[]{1,2,3,4,5};
+        int[] second = new int[]{2,1,2,3,2,4,2,5};
+        int[] thrid = new int[]{3,3,1,1,2,2,4,4,5,5};
 
-			HashMap<Integer, Integer> map = new HashMap<>();
+        int max = 0;
+        int[] history = new int[3];
+        
+        for (int i = 0; i < answers.length; i++) {
+            int answer = answers[i];
+            
+            int firstAnswer = first[i % first.length];
+            int secondAnswer = second[i % second.length];
+            int thirdAnswer = thrid[i % thrid.length];
 
-			map.put(1, 0);
-			map.put(2, 0);
-			map.put(3, 0);
+            
+            if (firstAnswer == answer) {
+                history[0] = history[0] + 1;
+                max = Math.max(max, history[0]);
+            }
+            
+             if (secondAnswer == answer) {
+                history[1] = history[1] + 1;
+                max = Math.max(max, history[1]);
+            }
+            
+             if (thirdAnswer == answer) {
+               history[2] = history[2] + 1;
+               max = Math.max(max, history[2]);
+            }
+        }
 
-			for (int i = 0; i < answers.length; i++) {
-				int answer = answers[i];
+        ArrayList<Integer> arrayList = new ArrayList<>();
 
-				// 정답과 수포자들의 답을 비교해야 함.
-
-				int aAnswer = one[i % one.length];
-				int bAnswer = two[i % two.length];
-				int cAnswer = three[i % three.length];
-
-				if (answer == aAnswer) {
-					map.put(1, map.getOrDefault(1, 0) + 1);
-				}
-
-				if (answer == bAnswer) {
-					map.put(2, map.getOrDefault(2, 0) + 1);
-				}
-
-				if (answer == cAnswer) {
-					map.put(3, map.getOrDefault(3, 0) + 1);
-
-				}
-
-			}
-
-			Integer maxValue = map.values().stream().max(Integer::compareTo).get();
-			int[] answerArray = map.keySet()
-				.stream()
-				.filter(key -> map.get(key).equals(maxValue))
-				.mapToInt(Integer::valueOf)
-				.toArray();
-
-			Arrays.sort(answerArray);
-			return answerArray;
-		}
-	}
+        
+        for (int i = 0; i < history.length; i++) {
+            if (max == history[i]) {
+                arrayList.add(i+1);
+            }
+        }
+        
+        arrayList.sort(null);
+        
+        
+       int[] answer = arrayList.stream().mapToInt(Integer::intValue).toArray();
+ 
+        return answer;
+    }
+}
