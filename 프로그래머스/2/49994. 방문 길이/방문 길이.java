@@ -1,86 +1,133 @@
-import java.util.HashSet;
- 
+import java.util.*;
+
 class Solution {
-	public int solution(String dirs) {
-
-			// 방문을 확인해야함.
-
-			int row = 0;
-			int col = 0;
-
-			// row, col
-
-			HashSet<String> set = new HashSet<>();
-			int cnt = 0;
-
-			for (int i = 0; i < dirs.length(); i++) {
-
-				String command = String.valueOf(dirs.charAt(i));
-
-				if (command.equals("U") && row + 1 <= 5) {
-					String history = row + "" + col + " " + (row + 1) + "" + col;
-
-					row = row + 1;
-
-					String[] split = history.split(" ");
-					String reverse = split[1] + " " + split[0];
-
-					if (!set.contains(history) && !set.contains(reverse)) {
-						set.add(history);
-						set.add(reverse);
-						cnt++;
-					}
-					continue;
-				}
-
-				if (command.equals("D") && row - 1 >= -5) {
-					String history = row + "" + col + " " + (row - 1) + "" + col;
-
-					row = row -1;
-
-					String[] split = history.split(" ");
-					String reverse = split[1] + " " + split[0];
-
-					if (!set.contains(history) && !set.contains(reverse)) {
-						set.add(history);
-						set.add(reverse);
-						cnt++;
-					}
-					continue;
-				}
-
-				if (command.equals("L") && col - 1 >= -5) {
-					String history = row + "" + col + " " + row + "" + (col - 1);
-					System.out.println("history = " + history);
-
-					col = col - 1;
-
-					String[] split = history.split(" ");
-					String reverse = split[1] + " " + split[0];
-
-					if (!set.contains(history) && !set.contains(reverse)) {
-						set.add(history);
-						set.add(reverse);
-						cnt++;
-					}
-					continue;
-				}
-
-				if (command.equals("R") && col + 1 <= 5) {
-					String history = row + "" + col + " " + row + "" + (col + 1);
-
-					col = col + 1;
-
-					String[] split = history.split(" ");
-					String reverse = split[1] + " " + split[0];
-
-					if (!set.contains(history) && !set.contains(reverse)) {
-						set.add(history);
-						set.add(reverse);
-						cnt++;
-					}
-				}
-			}
-			return cnt;
-		}
-	}
+    public int solution(String dirs) {
+        
+        
+        char[] commands = dirs.toCharArray();
+        int answer = 0;
+        int[] start = new int[]{0,0};
+        HashSet<String> set = new HashSet<>();
+        
+        
+        for (int i = 0; i < commands.length; i++) {
+            char command = commands[i];
+            int nextX;
+            int nextY;
+            
+            if (command == 'L') {
+                // 0 -1
+                nextY = start[0];
+                nextX = start[1] - 1;
+                
+                if (nextX > 5 || nextX < -5 || nextY > 5 || nextY < -5) {
+                    continue;
+                }
+                
+                // 0 0 0 -1
+                String right = start[0] + "" + start[1] + "" + nextY + "" + nextX;
+                String reverse = nextY + "" + nextX + "" + start[0] + "" + start[1];
+                
+                start[0] = nextY;
+                start[1] = nextX;
+                
+                if (set.contains(right) || set.contains(reverse)) {
+                    continue;
+                }
+                
+                set.add(right);
+                set.add(reverse);
+                answer++;
+                continue;    
+            }
+            
+                    
+            if (command == 'R') {
+                // 0 +1
+                nextY = start[0];
+                nextX = start[1] + 1;
+                
+                if (nextX > 5 || nextX < -5 || nextY > 5 || nextY < -5) {
+                    continue;
+                }
+                
+                // 0 0 0 -1
+                String right = start[0] + "" + start[1] + "" + nextY + "" + nextX;
+                String reverse = nextY + "" + nextX + "" + start[0] + "" + start[1];
+                
+                start[0] = nextY;
+                start[1] = nextX;
+                
+                if (set.contains(right) || set.contains(reverse)) {
+                    continue;
+                }
+                
+                set.add(right);
+                set.add(reverse);
+                answer++;
+                continue; 
+            }
+            
+                    
+            if (command == 'U') {
+                // +1 0
+                
+                nextY = start[0] + 1;
+                nextX = start[1];
+                
+                if (nextX > 5 || nextX < -5 || nextY > 5 || nextY < -5) {
+                    continue;
+                }
+                
+                String right = start[0] + "" + start[1] + "" + nextY + "" + nextX;
+                String reverse = nextY + "" + nextX + "" + start[0] + "" + start[1];
+                
+                start[0] = nextY;
+                start[1] = nextX;
+                
+                if (set.contains(right) || set.contains(reverse)) {
+                    continue;
+                }
+                
+                set.add(right);
+                set.add(reverse);
+                answer++;
+                continue; 
+            }
+            
+                    
+            if (command == 'D') {
+                // -1 0
+                nextY = start[0] -1;
+                nextX = start[1];
+                
+                if (nextX > 5 || nextX < -5 || nextY > 5 || nextY < -5) {
+                    continue;
+                }
+                
+                String right = start[0] + "" + start[1] + "" + nextY + "" + nextX;
+                String reverse = nextY + "" + nextX + "" + start[0] + "" + start[1];
+                
+                start[0] = nextY;
+                start[1] = nextX;
+                
+                if (set.contains(right) || set.contains(reverse)) {
+                    continue;
+                }
+                
+                set.add(right);
+                set.add(reverse);
+                answer++;
+                continue; 
+            }
+            
+        }
+        
+        for(String key : set) {
+            System.out.println(key);
+        }
+        
+    
+        return answer;
+    }
+}
