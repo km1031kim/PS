@@ -1,77 +1,81 @@
-import java.util.ArrayDeque;
+import java.util.*;
 
- class Solution {
-		public int solution(String input) {
-			int result = 0;
+class Solution {
+    public int solution(String s) {
+        
+        String[] array = s.split("");
+        int answer = 0;
+        
+        for (int i = 0; i < array.length; i++){
+            if (i == 0) {
+                if (isRight(s)) {
+                    answer++;
+                    continue;
+                }
+            }
+            
+            String first = array[0];
+            
+            for (int j = 0; j < array.length - 1; j++) {
+                array[j] = array[j + 1];
+            }
+            
+            array[array.length-1] = first;
+            String join = String.join("", array);
+            
+            if (isRight(join)) {
+                answer++;
+            }
+        }
+        
+        return answer;
+    }
+    
+    public boolean isRight(String joinedString) {
+        
+        ArrayDeque<Character> stack = new ArrayDeque<>();
+        
+        char[] charArray = joinedString.toCharArray();
+        
+        for (int i = 0; i < charArray.length; i++) {
+            
+            char current = charArray[i];
+            
+        
+            // 스택이 비어있다면 바로 넣기
+            if (stack.isEmpty()) {
+                if (current == '}' || current == ']' || current ==')') {
+                    return false;
+                }
+                stack.push(current);
+                continue;
+            }
+            
+            // 괄호 확인할 필요 없는 경우 그냥 넣기
+            char top = stack.peek();
+            if (top == '{' && current == '}') {
+                stack.pop();
+                continue;
 
-			String[] split = input.split(""); // [ ] ( ) { }
-
-			for (int i = 0; i < input.length(); i++) {
-				if (i == 0) {
-					if (isRight(input)) {
-						result++;
-					}
-					continue;
-				}
-
-				String first = split[0];
-				for (int j = 0; j < split.length - 1; j++) {
-					split[j] = split[j + 1];
-				}
-				split[split.length - 1] = first;
-				String join = String.join("", split);
-				if (isRight(join)) {
-					result++;
-				}
-
-			}
-
-			return result;
-		}
-
-		private static boolean isRight(String input) {
-
-			//
-			ArrayDeque<String> stack = new ArrayDeque<>();
-
-			String[] split = input.split("");
-
-			for (int i = 0; i < split.length; i++) {
-
-				String s = split[i];
-
-				if (stack.isEmpty()) {
-					stack.push(s);
-					continue;
-				}
-
-				String top = stack.peek();
-
-				if (s.equals(")")) {
-					if (top.equals("(")) {
-						stack.pop();
-					}
-					continue;
-				}
-
-				if (s.equals("]")) {
-					if (top.equals("[")) {
-						stack.pop();
-					}
-					continue;
-				}
-
-				if (s.equals("}")) {
-					if (top.equals("{")) {
-						stack.pop();
-					}
-					continue;
-				}
-				stack.push(s);
-			}
-
-			return stack.isEmpty();
-		}
-	}
+            }
+            
+            if (top == '[' && current == ']') {
+               stack.pop();
+               continue;
 
 
+            }
+            
+            if (top == '(' && current == ')') {
+                stack.pop();
+                continue;
+
+            }
+            
+            stack.push(current);
+        }
+        
+        return stack.isEmpty();
+        
+    }
+}
