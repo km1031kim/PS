@@ -1,63 +1,75 @@
+import java.util.*;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-
-
-     class Solution {
-        public  int solution(int[][] board, int[] moves) {
-
-            // 크레인 세팅
-            ArrayList<ArrayDeque<Integer>> stackArray = new ArrayList<>();
-
-            for (int i = 0; i < board[0].length; i++) {
-                stackArray.add(new ArrayDeque<>());
-                for (int j = board.length-1; j >= 0; j--) {
-                    ArrayDeque<Integer> stack = stackArray.get(i);
-                    int value = board[j][i];
-                    if (value == 0) {
-                        continue;
-                    }
+class Solution {
+    public int solution(int[][] board, int[] moves) {
+        
+        // 세팅부터 해야한다.
+        int boardSize = board.length;
+        
+        
+        HashMap<Integer, ArrayDeque<Integer>> map = new HashMap<>();
+        
+        // 스택 세팅
+        for (int i = 0; i < boardSize; i++) {
+            ArrayDeque<Integer> stack = new ArrayDeque<>();
+            map.put(i, new ArrayDeque<Integer>());
+        }
+        
+        
+        // 스택에 값 넣기
+        for (int i = boardSize - 1; i >= 0; i--) {
+            // 4 3 2 1 0
+            for (int j = 0; j < board[i].length; j++) {
+                ArrayDeque<Integer> stack = map.get(j);
+                
+                int value = board[i][j];
+                if (value != 0) {
                     stack.push(value);
                 }
+                
             }
-            System.out.println(stackArray);
-
-            // 뽑기 시작
-            ArrayDeque<Integer> answer = new ArrayDeque<>();
-            int cnt = 0;
-
-            for (int i = 0; i < moves.length; i++) {
-
-                // 일단 뽑아야 한다.
-               // System.out.println("moves[" + i + "] : " + moves[i]);
-                int craneIndex = moves[i] - 1; // 0번인덱스가 1번이니까..
-              //  System.out.println(craneIndex + "번째 크레인에서 뺍니다");
-
-                if (stackArray.get(craneIndex).isEmpty()) {
-                 //   System.out.println(craneIndex + "번째 크레인은 현재 비어있어요");
+        }
+        
+//         // 출력
+//         for (ArrayDeque<Integer> test : map.values()) {
+//             while (!test.isEmpty()){
+//                 System.out.print(test.pop());
+//             }
+//             System.out.println();
+//         }
+        
+        ArrayDeque<Integer> basket = new ArrayDeque<>();
+        int answer = 0;
+        
+        for (int i = 0; i < moves.length; i++) {
+            int stackIndex = moves[i] - 1;
+            
+            ArrayDeque<Integer> stack = map.get(stackIndex);
+            
+            if (!stack.isEmpty()) {
+                
+                int top = stack.pop();
+                System.out.println("현재 인형 : " + top);
+                
+                if (basket.isEmpty()) {
+                    basket.push(top);
                     continue;
                 }
-                int pick = stackArray.get(craneIndex).pop();
-               // System.out.println("pick = " + pick);
-                // 뽑아서 answer 스택에 넣는다
+                
+                int basketTop = basket.peek();
+                System.out.println("바구니 맨 위 : " + basketTop);
 
-                // 비어있지 않다면, 같은지 확인한다. 같으면 answer 스택에서 제거한다.
-                if (!answer.isEmpty() && answer.peek().equals(pick)) {
-                 //   System.out.println("정답 스택에 이미 있음. 제거 " + pick);
-                    answer.pop();
-                    cnt = cnt + 2;
-                  //  System.out.println("카운트 ++ " +cnt);
-                } else {
-                   // System.out.println("중복되지 않으므로 그냥 넣는다 " + pick);
-                    answer.push(pick);
+                if (top == basketTop) {
+                    basket.pop();
+                    answer = answer + 2;
+                    continue;
                 }
-               // System.out.println(answer);
-
+                
+                basket.push(top);
             }
-
-
-            //System.out.println(cnt);
-            return cnt;
+            
         }
+        
+        return answer;
     }
-
+}
